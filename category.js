@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const categorySchema = new Schema({
   //create a new schema for category
-  name: String,
+  categoryname: String,
   isActive: Boolean,
 });
 

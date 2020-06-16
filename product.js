@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 const productSchema = new Schema({
   //create a new schema for product
   categoryid: String,
-  name: String,
-  price: Number,
+  productname: String,
+  productprice: Number,
   isActive: Boolean,
 
 });

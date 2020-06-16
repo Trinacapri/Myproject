@@ -8,6 +8,8 @@ const userSchema = new Schema({
   password: String,
 });
 
+// npm install --save express-validator
+
 // userSchema.methods.generateAuthToken = async () => {
 //   const user = this;
 //   const token = jwt.sign({ _id: user._id.toString() }, "secretkey");
