@@ -8,6 +8,7 @@ const app = express(); //create an instance if express
 const api = require("./routes/api");
 app.use(bodyParser.json()); //specify the bodyparser to handle the json data
 app.use(cors());
+
 const db =
   "mongodb+srv://tri:Trina1234@cluster0-hcrj8.mongodb.net/eventsdb?retryWrites=true&w=majority"; //get the link of the database
 
