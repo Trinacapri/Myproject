@@ -28,63 +28,81 @@
   </li>
 </div> -->
 <mat-tab-group mat-align-tabs="start">
-  <mat-tab label="First">
-    <h2>Responsive Form</h2>
-    <p>
-      Resize the browser window to see the effect. When the screen is less than
-      600px wide, make the two columns stack on top of each other instead of
-      next to each other.
-    </p>
-
+  <mat-tab label="Add category">
     <div class="container">
       <form action="/action_page.php">
         <div class="row">
           <div class="col-25">
-            <label for="fname">First Name</label>
+            <label for="fname">Category Name</label>
           </div>
           <div class="col-75">
             <input
               type="text"
               id="fname"
               name="firstname"
-              placeholder="Your name.."
+              placeholder="category name.."
             />
           </div>
         </div>
+
+        <div class="row">
+          <input type="submit" value="Submit" />
+        </div>
+      </form>
+    </div>
+  </mat-tab>
+  <mat-tab label="Add Product">
+    <div class="container">
+      <form action="/action_page.php">
         <div class="row">
           <div class="col-25">
-            <label for="lname">Last Name</label>
+            <label for="productname">product Name</label>
           </div>
           <div class="col-75">
             <input
               type="text"
-              id="lname"
-              name="lastname"
-              placeholder="Your last name.."
+              id="productname"
+              name="productname"
+              placeholder="Product name.."
             />
           </div>
         </div>
+
         <div class="row">
           <div class="col-25">
-            <label for="country">Country</label>
+            <label for="productprice">Product price</label>
+          </div>
+          <div class="col-75">
+            <input
+              type="number"
+              id="productname"
+              name="productname"
+              placeholder="Product price.."
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-25">
+            <label for="category">Category</label>
           </div>
           <div class="col-75">
             <select id="country" name="country">
-              <option value="australia">Australia</option>
-              <option value="canada">Canada</option>
-              <option value="usa">USA</option>
+              <option value="australia">Electronics</option>
+              <option value="canada">Mens wear</option>
+              <option value="usa">Makeup</option>
             </select>
           </div>
         </div>
         <div class="row">
           <div class="col-25">
-            <label for="subject">Subject</label>
+            <label for="subject">Description</label>
           </div>
           <div class="col-75">
             <textarea
               id="subject"
               name="subject"
-              placeholder="Write something.."
+              placeholder="Write something about the product.."
               style="height: 200px;"
             ></textarea>
           </div>
@@ -92,9 +110,30 @@
         <div class="row">
           <input type="submit" value="Submit" />
         </div>
-      </form>
-    </div>
-  </mat-tab>
-  <mat-tab label="Second">Content 2</mat-tab>
-  <mat-tab label="Third">Content 3</mat-tab>
+      </form></div
+  ></mat-tab>
+  <mat-tab label="View Products">
+    <mat-card class="example-card">
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title>Shiba Inu</mat-card-title>
+        <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+      </mat-card-header>
+      <img
+        mat-card-image
+        src="https://material.angular.io/assets/img/examples/shiba2.jpg"
+        alt="Photo of a Shiba Inu"
+      />
+      <mat-card-content>
+        <p>
+          The Shiba Inu is the smallest of the six original and distinct spitz
+          breeds of dog from Japan. A small, agile dog that copes very well with
+          mountainous terrain, the Shiba Inu was originally bred for hunting.
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button>Buy</button>
+       
+      </mat-card-actions> </mat-card
+  ></mat-tab>
 </mat-tab-group>
