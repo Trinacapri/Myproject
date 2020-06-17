@@ -3,6 +3,8 @@ import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AppRoutingModule } from "./app-routing.module";
 
+import{MaterialModule} from "./material";
+
 import { AppComponent } from "./app.component";
 import { LoginComponent } from "./login/login.component";
 import { RegistrationComponent } from "./registration/registration.component";
@@ -16,6 +18,7 @@ import { AuthService } from "./auth.service";
 import { HttpClientModule } from "@angular/common/http";
 import { AuthGuard } from "./auth.guard";
 import { UserloginComponent } from "./userlogin/userlogin.component";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,7 @@ import { UserloginComponent } from "./userlogin/userlogin.component";
     DropdownDirective,
     UserloginComponent,
   ],
-  imports: [BrowserModule, FormsModule, AppRoutingModule, HttpClientModule],
+  imports: [BrowserModule, FormsModule, AppRoutingModule, HttpClientModule,BrowserAnimationsModule,MaterialModule],
   providers: [AuthService, AuthGuard],
   bootstrap: [AppComponent],
 })
