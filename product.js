@@ -10,7 +10,7 @@ const productSchema = new Schema({
   productmgfdate: String,
   productexpiredate: String,
   productdescription: String,
-  productimage:String, 
+  productimage: String,
 
   categoryid: {
     type: mongoose.Schema.Types.ObjectId,
