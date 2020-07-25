@@ -12,10 +12,11 @@ export class HomepageComponent implements OnInit {
   // cat :{};
   cat: any[];
   categoryList = [];
-
+  image: any;
+  file: any;
+  item: any;
   products: any[];
 
-  // categoryid = "";
   categoryid = "";
   productname: string;
   productprice: string;
@@ -33,12 +34,17 @@ export class HomepageComponent implements OnInit {
     categoryname: String,
   };
 
-  constructor(private _authService: AuthService, private _router: Router) {
+  constructor(
+    private _authService: AuthService,
+    private _router: Router,
+    private _catservice: AuthService
+  ) {
     this.service = _authService;
   }
 
   ngOnInit() {
     this.loadCategories();
+    this.loadAllProducts();
   }
 
   addcategoryName() {
@@ -52,7 +58,7 @@ export class HomepageComponent implements OnInit {
     );
   }
   addProduct() {
-    this._authService
+    this.service
       .addproduct(
         this.productname,
         this.productprice,
@@ -75,39 +81,22 @@ export class HomepageComponent implements OnInit {
       });
   }
 
-  // loadCategories() {
-  //   this._authService.getCategories().subscribe((response) => {
-  //     console.log(response);
-  //     //  this.cat[]= response[];
-  //     // (cat) => (response = cat);
-  //     // this.cat = response["categories"];
-  //     // (response) => (this.cat = response);
-  //     this.cat = [
-  //       { id: 1, categoryname: "kids wear" },
-  //       { id: 2, categoryname: "mens wear" },
-  //       { id: 3, categoryname: "womens wear" },
-  //     ];
-
-  //     console.log(this.cat);
-  //     // if (this.cat.length > 0) this.categoryid = this.cat[0].id;
-  //     // }
-  //   });
-  // }
-
   loadCategories() {
-    this._authService.getCategories().subscribe((response) => {
+    this._catservice.getCategories().subscribe((response) => {
       if (response["status"] == "success") {
-        // this.categoryList = response["data"];
         this.cat = response["data"];
       }
 
-      // if (this.categoryList.length > 0) this.categoryid = this.cat[0]._id;
-      if (this.cat.length > 0) this.categoryid = this.cat[0]._categoryid;
+      if (this.cat.length > 0) this.categoryid = this.cat[0].id;
     });
   }
 
   onSelectImage(event) {
-    this.productimage = event.target.files[0];
+    this._catservice
+      .getImage(event.target.files[0])
+      .subscribe((response: any) => {
+        this.productimage = response.filename;
+      });
   }
 
   //   this._authService.getproduct().subscribe((response)=>{
@@ -124,17 +113,49 @@ export class HomepageComponent implements OnInit {
   // this.loadAllProducts()
   // }
 
-  // loadAllProducts() {
-  //   this._authService
-  //     .getAllProducts()
-  //     .subscribe(response => {
-  //       if (response['status'] == 'success') {
-  //         this.products = response['data']
-  //       } else {
-  //         alert('error')
-  //       }
-  //     })
+  loadAllProducts() {
+    this._authService.getAllProducts().subscribe((response) => {
+      if (response["status"] == "success") {
+        this.products = response["data"];
+        console.log(this.products);
+      } else {
+        alert("error");
+      }
+    });
+  }
+  // loadproductimage() {
+  //   this._authService.getImage(this.file).subscribe((response) => {
+  //     this.image = this.file;
+
+  //   });
   // }
+
+  ondelete(productId: number) {
+    // this._authService.deleteProduct(id).subscribe(
+    //   (data) => {
+    //     this.products= data;
+    //     alert("delete product");
+    //     this.products = ["data"];
+    //   },
+    //   (error) => {
+    //     console.log(error);
+    //   }
+    // );
+  }
+  onUpdate() {
+    this._authService.editproduct(this.item).subscribe((response) => {
+      if (response["status"] == "success") {
+        alert("product-updated");
+        this._router.navigate(["/home"]);
+      } else {
+        console.log(response["error"]);
+        alert("error");
+        //toastr.error(response['error'])
+      }
+    });
+    console.log("hi");
+  }
+
   logoutUser() {
     localStorage.removeItem("token");
     this._router.navigate(["/login"]);
