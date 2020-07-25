@@ -18,22 +18,20 @@ const authorize = require("../middleware/authorized");
 // npm run dev
 // npm start
 
-router.use(express.static((_dirname = "./public/")));
-const Storage = multer.diskStorage({
-  destination: "./public/uploads/",
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
-    );
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
 //upload middleware
-const upload = multer({ storage: Storage }).single("file");
+const upload = multer({ storage });
 //api endpoints
 
-router.post("/upload", upload, function (req, res, next) {
+router.post("/upload", upload.single("file"), function (req, res, next) {
   const file = req.file;
   if (!file) {
     const error = new Error("please upload a file");
@@ -42,13 +40,26 @@ router.post("/upload", upload, function (req, res, next) {
   }
   res.send(file);
 });
+
+// {
+//   "fieldname": "file",
+//   "originalname": "dark.jpg",
+//   "encoding": "7bit",
+//   "mimetype": "image/jpeg",
+//   "destination": "./uploads",
+//   "filename": "file-1593589507584dark.jpg",
+//   "path": "uploads\\file-1593589507584dark.jpg",
+//   "size": 75114
+// }
+// http://localhost:5000/uploads/file-1593589507584dark.jpg
+
 router.post("/register", authValidation, async (req, res) => {
   try {
-    const newUser = new User(req.body);
+    const newUser = new User(req.body); //get the data from req body and convert the data into the model that mongoose understand
     const user = await newUser.save(); // new user saved in database
 
     // const token = await User.generateAuthToken();
-    const payload = { userId: user.id };
+    const payload = { userId: user.id }; //payload is the unique id for every user
     const token = await jwt.sign(payload, "secretkey");
 
     res.status(201).json({ token }); //converting into json
@@ -117,6 +128,27 @@ router.get("/category", async (req, res, next) => {
       });
     });
 });
+
+router.get("/userdetails", async (req, res, next) => {
+  User.find({})
+    .populate("user")
+
+    .exec()
+    .then((data) => {
+      res.status(201).json({
+        data: data,
+        status: "success",
+        message: "userdetails details found",
+      });
+    })
+    .catch((er) => {
+      res.status(500).json({
+        data: er,
+        status: "failed",
+        message: "Internal server error",
+      });
+    });
+});
 //updating category
 router.patch("/category", authorize, async (req, res) => {
   const updates = Object.keys(req.body);
@@ -164,11 +196,13 @@ router.post(
   "/product",
   authorize,
   productValidation,
-  upload,
+
   async (req, res) => {
+    console.log(req.body);
+
     try {
       const newProduct = new Product({
-        productname: re.body.productname,
+        productname: req.body.productname,
         productprice: req.body.productprice,
         productdiscount: req.body.productdiscount,
         productdoseInMG: req.body.productdoesInMG,
@@ -183,6 +217,7 @@ router.post(
       const product = await newProduct.save(); // new category saved in database
       res.status(200).json(product); //converting into json
     } catch (e) {
+      console.log(e);
       res.status(400).json(e);
     }
   }
@@ -190,63 +225,121 @@ router.post(
 
 //getting product details
 
-router.get("/product", authorize, async (req, res) => {
-  try {
-    const products = await Product.find({});
-    if (isEmpty(products)) {
-      return res.status(400).json({ error: "No products found" });
-    }
-    res.status(200).json(products); //converting into json
-  } catch (e) {
-    res.status(400).json(e);
-  }
+router.get("/product", async (req, res, next) => {
+  Product.find({})
+    .populate("product")
+
+    .exec()
+    .then((data) => {
+      res.status(201).json({
+        data: data,
+        status: "success",
+        message: "product details found",
+      });
+    })
+    .catch((er) => {
+      res.status(500).json({
+        data: er,
+        status: "failed",
+        message: "Internal server error",
+      });
+    });
 });
 
 //updating product details
 
-router.patch("/product", authorize, async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = [
-    " productname",
-    "productprice",
-    "productdiscount",
-    "productpriceWithDiscount",
-    "productdoseInMG",
-    "productmgfdate",
-    "productexpiredate",
-    "productdescription",
-  ];
-  const isValidOperation = updates.every((update) =>
-    allowedUpdates.includes(update)
-  );
-  if (!isValidOperation) {
-    return res.status(400).json({ error: "invalid updates" });
-  }
+// router.patch("/product", authorize, async (req, res) => {
+//   const updates = Object.keys(req.body);
+//   const allowedUpdates = [
+//     " productname",
+//     "productprice",
+//     "productdiscount",
+//     "productpriceWithDiscount",
+//     "productdoseInMG",
+//     "productmgfdate",
+//     "productexpiredate",
+//     "productdescription",
+//   ];
+//   const isValidOperation = updates.every((update) =>
+//     allowedUpdates.includes(update)
+//   );
+//   if (!isValidOperation) {
+//     return res.status(400).json({ error: "invalid updates" });
+//   }
+//   try {
+//     const products = await Product.findByIdAndUpdate(req.params.id, req.body, {
+//       new: true,
+//       runValidators: true,
+//     });
+//     if (isEmpty(products)) {
+//       return res.status(400).json({ error: "No products found" });
+//     }
+//     res.send(products);
+//   } catch {
+//     res.status(400).json(e);
+//   }
+// });
+
+router.put("/UpdateProduct/:id", async (req, res) => {
   try {
-    const products = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
+    const reqBody = Object.keys(req.body);
+
+    const updates = {};
+
+    const updateProduct = await Product.updateOne(
+      { _id: req.params.id },
+      { $set: updates },
+      function (err, result) {
+        if (err) {
+          res.status(500).send(err);
+        } else {
+          res.status(200).send({
+            status: "success",
+            message: "Update all product ",
+            data: result,
+          });
+        }
+      }
+    );
+  } catch (e) {
+    res.status(500).send({
+      status: "failed",
+      message: "Internal server error!!!",
+      e,
     });
-    if (isEmpty(products)) {
-      return res.status(400).json({ error: "No products found" });
-    }
-    res.send(products);
-  } catch {
-    res.status(400).json(e);
   }
 });
 
 //deleting product
 
-router.delete("/product", authorize, async (req, res) => {
+// router.delete("/:id", async (req, res) => {
+//   try {
+//     const product = await product.findByIdAndDelete(req.params.id);
+//     if (!product) {
+//       return res.status(404).json();
+//     }
+//     res.send(product);
+//   } catch (e) {
+//     res.status(500).json(e);
+//   }
+// });
+
+router.delete("/DeleteProduct/:id", async (req, res) => {
   try {
-    const product = await product.findByIdAndDelete(req.params.id);
-    if (!product) {
-      return res.status(404).json();
-    }
-    res.send(product);
+    const deleteProduct = await Product.findByIdAndDelete({
+      _id: req.params.id,
+    });
+    res.status(200).send({
+      status: "success",
+      message: "Delete Successfully from Product!!!",
+      deleteProduct,
+    });
   } catch (e) {
-    res.status(500).json(e);
+    res.status(500).send({
+      status: "failed",
+      message: "Internal Server Error!!",
+      e,
+    });
   }
 });
 
