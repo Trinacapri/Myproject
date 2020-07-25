@@ -3,7 +3,7 @@ import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AppRoutingModule } from "./app-routing.module";
 
-import{MaterialModule} from "./material";
+import { MaterialModule } from "./material";
 
 import { AppComponent } from "./app.component";
 import { LoginComponent } from "./login/login.component";
@@ -15,11 +15,11 @@ import { ProductsComponent } from "./products/products.component";
 import { HeaderComponent } from "./header/header.component";
 import { DropdownDirective } from "./shared/dropdown.directive";
 import { AuthService } from "./auth.service";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AuthGuard } from "./auth.guard";
 import { UserloginComponent } from "./userlogin/userlogin.component";
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { TokenInterceptorService } from "./token-interceptor.service";
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,8 +33,23 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     DropdownDirective,
     UserloginComponent,
   ],
-  imports: [BrowserModule, FormsModule, AppRoutingModule, HttpClientModule,BrowserAnimationsModule,MaterialModule],
-  providers: [AuthService, AuthGuard],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MaterialModule,
+  ],
+  providers: [
+    AuthService,
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorService,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
