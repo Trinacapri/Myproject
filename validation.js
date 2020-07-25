@@ -25,7 +25,7 @@ const authValidation = (req, res, next) => {
 
 const categoryValidation = (req, res, next) => {
   let errors = {};
-  const { categoryname, productnmae } = req.body;
+  const { categoryname } = req.body;
   if (validator.isEmpty(categoryname))
     errors.categoryname = "category name is required";
   else if (!validator.isLength(categoryname, { min: 3, max: 5 }))
@@ -37,14 +37,17 @@ const categoryValidation = (req, res, next) => {
 };
 const productValidation = (req, res, next) => {
   let errors = {};
-  const { productnmae, productprice } = req.body;
+  const { productname, productprice, productdescription } = req.body;
   if (validator.isEmpty(productname))
     errors.productname = "product name is required";
   else if (!productprice > 0)
     errors.productname = "product price must be greater than 0";
+  else if (validator.isEmpty(productdescription))
+    errors.productdescription = "product description must be added";
   if (!isEmpty(errors)) {
     return res.status(422).json(errors);
   }
+  next();
 };
 
 module.exports = {
